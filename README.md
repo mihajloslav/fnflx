@@ -1,4 +1,4 @@
-# FON Nastava App
+# Fonflix
 
 Aplikacija za pristup snimljenim predavanjima Fakulteta Organizacionih Nauka.
 
