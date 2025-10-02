@@ -66,13 +66,11 @@ services:
           cpus: '0.5'
           memory: 128M
 
-# Custom network definicija
 networks:
   fonflix-network:
     name: fonflix-network
     driver: bridge
 
-# Volume definicije
 volumes:
   fonflix-logs:
     name: fonflix-logs
