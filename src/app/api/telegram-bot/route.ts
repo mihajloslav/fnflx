@@ -4,9 +4,8 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
-    // Forward request to Supabase Edge Function
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const functionUrl = `${supabaseUrl}/functions/v1/fonflix-tg-bot`; // Use the actual deployed function name
+    const functionUrl = `${supabaseUrl}/functions/v1/fonflix-tg-bot`; 
     
     console.log('Forwarding request to:', functionUrl);
     console.log('Request body:', JSON.stringify(body, null, 2));
