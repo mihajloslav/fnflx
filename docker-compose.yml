@@ -1,0 +1,93 @@
+name: fonflix
+
+services:
+  frontend:
+    container_name: fonflix-container
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+    networks:
+      - fonflix-network
+    volumes:
+      - fonflix-volume:/app/node_modules
+      - ./src:/app/src:ro
+      - ./.env.local:/app/.env.local:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+  nginx:
+    container_name: fonflix-nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - fonflix-network
+    volumes:
+      - fonflix-logs:/var/log/nginx
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      frontend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+
+# Custom network definicija
+networks:
+  fonflix-network:
+    name: fonflix-network
+    driver: bridge
+
+# Volume definicije
+volumes:
+  fonflix-logs:
+    name: fonflix-logs
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./docker-data/nginx-logs
+      
+  fonflix-volume:
+    name: fonflix-volume
+    driver: local
+
+
+
+
+
+
+
