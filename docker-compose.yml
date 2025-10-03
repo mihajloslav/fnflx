@@ -21,7 +21,6 @@ services:
     volumes:
       - fonflix-volume:/app/node_modules
       - ./src:/app/src:ro
-      - ./.env.local:/app/.env.local:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
